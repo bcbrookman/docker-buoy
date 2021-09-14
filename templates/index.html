@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Buoy</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+</head>
+<body class="bg-light">
+	<header>
+		<nav class="navbar navbar-dark bg-dark shadow">
+			<div class="container">
+				<span class="navbar-brand mb-0 h1">Bouy</span>
+				<form class="d-flex">
+					<button type="button" class="ms-2 btn btn-primary" id="play">Play</button>
+					<button type="button" class="ms-2 btn btn-secondary" id="stop">Stop</button>
+				</form>
+			</div>
+		</nav>
+	</header>
+	<main class="container">
+		<div id="results"></div>
+	</main>
+</body>
+<script>
+	function getSysinfo() {
+		$.get("/sysinfo", function( data ) {
+			var content = 
+				`<div class="card shadow mt-3 mb-3" style="border-left: 1em solid #${data.color};">
+					<table class="table table-sm">
+						<tbody>
+							<tr><th scope="row">Hostname:</th><td>${data.hostname}</td></tr>
+							<tr><th scope="row">Kernel Release:</th><td>${data.kernel_system} ${data.kernel_release}</td></tr>
+							<tr><th scope="row">Kernel Version:</th><td>${data.kernel_version}</td></tr>
+							<tr><th scope="row">Architecture:</th><td>${data.kernel_architecture}</td></tr>
+							<tr><th scope="row">CPU Cores:</th><td>${data.cpu_count_physical} (${data.cpu_count_logical} logical)</td></tr>
+							<tr><th scope="row">Total Memory:</th><td>${(data.mem_total_bytes/(1024**3)).toFixed(2)} GiB</td></tr>
+						</tbody>
+					</table>
+				</div>`
+			$('#results').prepend(content);
+		});
+	}
+
+	// After page load, get the first result
+	$(document).ready(getSysinfo);
+
+	// Initialize a variable to store the interval
+	var interval = null
+
+	$('button#play').click(function(){
+		getSysinfo();
+		interval = setInterval(getSysinfo, 2000)  // Calls getSysinfo every 2 seconds
+	});
+
+	$('button#stop').click(function(){
+		clearInterval(interval)
+	}); 	
+</script>
+</html>	
