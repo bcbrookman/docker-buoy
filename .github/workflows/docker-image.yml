@@ -36,6 +36,9 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
+      - name: Checkout the repo at current context
+        uses: actions/checkout@v2
+      
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
