@@ -1,8 +1,12 @@
-FROM python:3.9-slim
-COPY requirements.txt /requirements.txt
-RUN pip3 install -r /requirements.txt
-COPY ./app.py /app.py
-COPY ./templates/ /templates/
-COPY ./static/ /static/
+FROM python:slim
+COPY requirements.txt app.py /
+COPY templates/ /templates/
+COPY static/ /static/
+RUN apt update -y \
+ && apt install -y gcc python3-dev --no-install-recommends \
+ && pip3 install -r /requirements.txt \
+ && apt purge -y --auto-remove gcc python3-dev \
+ && rm -rf /var/lib/apt/lists/*
+
 EXPOSE 5000
-ENTRYPOINT ["python", "app.py"]
+CMD ["python", "app.py"]
