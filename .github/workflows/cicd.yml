@@ -1,5 +1,5 @@
 ---
-name: Build
+name: CI/CD
 
 on:
   pull_request:
@@ -12,9 +12,8 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  # Test the image builds and works correctly.
-  test:
-    name: Test
+  cicd:
+    name: CI/CD
     runs-on: ubuntu-latest
 
     steps:
@@ -29,25 +28,11 @@ jobs:
           ./tasks.sh -e test:lint
           ./tasks.sh -e test:units
 
-      - name: Test building image
-        run: docker build -t docker-buoy .
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
 
-      - name: Run the built image
-        run: docker run --name test-container -d docker-buoy
-
-      - name: Verify Flask is accessible in the built image
-        run: docker exec --tty test-container flask --version
-
-  # On main branch only, build and release images.
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    needs: test
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout the repo at current context
-        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Set up Docker metadata
         id: meta
@@ -60,24 +45,39 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push image
+      - name: Build Docker image
         uses: docker/build-push-action@v3
         with:
           context: ./
           file: ./Dockerfile
+          load: true
+          tags: buoy:test
+      
+      - name: Run and test that the image works
+        run: |
+          docker run --name buoy -d buoy:test
+          docker exec --tty buoy flask --version
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        # Only push from main branch, and not from PRs
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.event_name != 'pull_request'
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image to DockerHub
+        uses: docker/build-push-action@v3
+        # Only push from main branch, and not from PRs
+        if: |
+          github.ref == 'refs/heads/main' &&
+          github.event_name != 'pull_request'
+        with:
+          context: ./
+          file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
