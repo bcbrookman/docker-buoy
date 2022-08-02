@@ -21,6 +21,14 @@ jobs:
       - name: Checkout the repo at current context
         uses: actions/checkout@v2
 
+      - name: Install test dependencies
+        run: ./tasks.sh test:install-depends
+
+      - name: Run static code tests
+        run: |
+          ./tasks.sh -e test:lint
+          ./tasks.sh -e test:units
+
       - name: Test building image
         run: docker build -t docker-buoy .
 
@@ -40,16 +48,16 @@ jobs:
     steps:
       - name: Checkout the repo at current context
         uses: actions/checkout@v2
-      
-      - name: Docker meta
+
+      - name: Set up Docker metadata
         id: meta
         uses: docker/metadata-action@v3
         with:
           images: bcbrookman/buoy
-    
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
