@@ -1,5 +1,7 @@
 ---
-version: "3.3"
+# Deploy for...
+#   Docker Swarm using `docker stack deploy`
+#   Docker Compose using `docker compose up --detach`
 
 services:
   traefik:
