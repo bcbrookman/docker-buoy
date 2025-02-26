@@ -1,13 +1,16 @@
-FROM python:slim
-COPY app.py /
-COPY templates/ /templates/
-COPY static/ /static/
-RUN --mount=type=bind,source=requirements/app.txt,target=/requirements.txt \
- apt update -y \
- && apt install -y gcc python3-dev --no-install-recommends \
- && pip3 install -r /requirements.txt \
- && apt purge -y --auto-remove gcc python3-dev \
- && rm -rf /var/lib/apt/lists/*
+# Set base image
+FROM python:3.12-slim
 
-EXPOSE 5000
+# Set static instructions
+WORKDIR /buoy/
+EXPOSE 5000/tcp
 CMD ["python", "app.py"]
+
+# Install dependencies
+RUN --mount=type=bind,source=requirements/app.txt,target=/requirements.txt \
+ set PIP_OPTS="--no-input --no-cache-dir --root-user-action=ignore --prefer-binary --upgrade" \
+ && pip install ${PIP_OPTS} pip \
+ && pip install ${PIP_OPTS} -r /requirements.txt
+
+# Copy project files
+COPY app.py templates/ static/ /buoy/
