@@ -1,0 +1,48 @@
+version: '3'
+
+run: once
+
+tasks:
+  default:
+    cmds:
+      - cmd: task --list
+        ignore_error: true
+        silent: true
+
+  install:app-reqs:
+    cmds:
+      - pip3 install --upgrade --requirement {{.PIP_REQS_FILE}}
+    status:
+      - python3 -c "import pkg_resources; pkg_resources.require(open('{{.PIP_REQS_FILE}}',mode='r'))" &>/dev/null
+    vars:
+      PIP_REQS_FILE: ./requirements/app.txt
+
+  install:test-reqs:
+    cmds:
+      - pip3 install --upgrade --requirement {{.PIP_REQS_FILE}}
+    status:
+      - python3 -c "import pkg_resources; pkg_resources.require(open('{{.PIP_REQS_FILE}}',mode='r'))" &>/dev/null
+    vars:
+      PIP_REQS_FILE: ./requirements/tests.txt
+
+  test:lint:
+    deps:
+      - install:app-reqs
+      - install:test-reqs
+    cmds:
+      - pylint ./app.py
+
+  test:units:
+    deps:
+      - install:app-reqs
+      - install:test-reqs
+    cmds:
+      - coverage run --source="./" -m pytest "./" 
+      - coverage report --omit test_* --fail-under=90
+
+  test:static:
+    aliases:
+      - test
+    cmds:
+      - task: test:lint
+      - task: test:units

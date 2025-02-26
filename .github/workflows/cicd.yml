@@ -20,13 +20,15 @@ jobs:
       - name: Checkout the repo at current context
         uses: actions/checkout@v2
 
-      - name: Install test dependencies
-        run: ./tasks.sh test:install-depends
+      - name: Install Task
+        uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run static code tests
         run: |
-          ./tasks.sh -e test:lint
-          ./tasks.sh -e test:units
+          task test:static
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
