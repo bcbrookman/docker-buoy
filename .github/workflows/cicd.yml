@@ -62,20 +62,14 @@ jobs:
 
       - name: Login to DockerHub
         uses: docker/login-action@v1
-        # Only push from main branch, and not from PRs
-        if: |
-          github.ref == 'refs/heads/main' &&
-          github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push Docker image to DockerHub
         uses: docker/build-push-action@v3
-        # Only push from main branch, and not from PRs
-        if: |
-          github.ref == 'refs/heads/main' &&
-          github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         with:
           context: ./
           file: ./Dockerfile
