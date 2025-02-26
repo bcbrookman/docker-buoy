@@ -5,10 +5,12 @@ updates:
     schedule:
       interval: "weekly"
   - package-ecosystem: "docker"
-    directory: "/"
+    directories: 
+      - "/"
     schedule:
       interval: "weekly"
   - package-ecosystem: "pip"
-    directory: "/requirements/**"
+    directories:
+      - "/requirements/**"
     schedule:
       interval: "weekly"
