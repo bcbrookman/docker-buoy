@@ -48,7 +48,7 @@ jobs:
             type=semver,pattern={{major}}
 
       - name: Build Docker image
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         with:
           context: ./
           file: ./Dockerfile
@@ -68,7 +68,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push Docker image to DockerHub
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v6
         if: github.event_name != 'pull_request'
         with:
           context: ./
