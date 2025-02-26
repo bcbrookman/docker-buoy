@@ -1,0 +1,45 @@
+# Hidden files
+**/.*
+
+# Docker files
+docker-compose.yml
+Dockerfile
+.docker
+.dockerignore
+
+# Python caches & packaging
+**/__pycache__/
+**/*.py[cod]
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+target/
+
+# Python virtual environments
+.env
+.venv/
+venv/
+
+# Test reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# Selected project files
+examples/
+**/test_*.py
+**/[Tt]askfile.yaml
