@@ -4,11 +4,11 @@ which renders all the content.
 
 import hashlib
 import platform
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, send_from_directory
 import psutil
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder=None)
 
 def hash_color(input_string):
     """
@@ -29,6 +29,14 @@ def root():
     Returns the index.html template.
     """
     return render_template("index.html")
+
+@app.route("/static/<path:name>")
+def static(name):
+    """
+    Flask route function to serve static files under "/static/".
+    Less performant, but avoids the need for a seperate webserver.
+    """
+    return send_from_directory("static/", name)
 
 @app.route("/sysinfo")
 def sysinfo():
