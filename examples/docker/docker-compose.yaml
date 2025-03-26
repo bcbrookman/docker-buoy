@@ -1,11 +1,16 @@
----
+# This Docker compose file exposes 3 Buoy containers behind Traefik.
 # Deploy for...
-#   Docker Swarm using `docker stack deploy`
-#   Docker Compose using `docker compose up --detach`
-
+#   Docker Swarm with `docker stack deploy`
+#   Docker Compose with `docker compose up --detach`
+# Access using `http://<localhost|node-ip-addr>:8000`
+#
+# Note that Traefik is an HTTP reverse proxy that load-balances HTTP requests.
+# The load-balancing distribution seen in Buoy should be mostly even since each
+# HTTP request can be sent to a different Buoy container.
+---
 services:
   traefik:
-    image: "traefik:v2.5"
+    image: "traefik:v2"
     container_name: "traefik"
     command:
       - "--log.level=DEBUG"
