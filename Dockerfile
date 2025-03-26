@@ -13,4 +13,6 @@ RUN --mount=type=bind,source=requirements/app.txt,target=/requirements.txt \
  && pip install ${PIP_OPTS} -r /requirements.txt
 
 # Copy project files
-COPY app.py templates/ static/ /buoy/
+COPY templates/ templates/
+COPY static/ static/
+COPY app.py app.py
