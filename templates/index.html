@@ -11,10 +11,16 @@
 	<header>
 		<nav class="navbar navbar-dark bg-dark shadow">
 			<div class="container">
-				<span class="navbar-brand mb-0 h1">Bouy</span>
+				<span class="navbar-brand mb-0 h1">Buoy</span>
 				<form class="d-flex">
-					<button type="button" class="ms-2 btn btn-primary" id="play">Play</button>
-					<button type="button" class="ms-2 btn btn-secondary" id="stop">Stop</button>
+					<button type="button" class="ms-2 btn btn-success" id="start-stop">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-play-fill" id="play" viewBox="0 0 16 16">
+							<path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393"/>
+						  </svg>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-stop-fill d-none" id="stop" viewBox="0 0 16 16">
+							<path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5"/>
+						</svg>
+						<span>Start</span></button>
 				</form>
 			</div>
 		</nav>
@@ -48,14 +54,21 @@
 
 	// Initialize a variable to store the interval
 	var interval = null
+	
+	// Start/Stop button function
+	$('button#start-stop').click(function() {
+		if ($(this).hasClass("playing")) {
+			clearInterval(interval)
+			$(this).children('span').html('Start')
+		} else {
+			getSysinfo();
+			interval = setInterval(getSysinfo, 2000)  // Calls getSysinfo every 2 seconds
+			$(this).children('span').html('Stop')
+		}
+		$(this).toggleClass(["btn-success", "btn-danger", "playing"])
+		$(this).children('svg#play').toggleClass('d-none')
+		$(this).children('svg#stop').toggleClass('d-none')
+  	});
 
-	$('button#play').click(function(){
-		getSysinfo();
-		interval = setInterval(getSysinfo, 2000)  // Calls getSysinfo every 2 seconds
-	});
-
-	$('button#stop').click(function(){
-		clearInterval(interval)
-	});
 </script>
 </html>
