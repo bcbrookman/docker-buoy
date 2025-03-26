@@ -6,6 +6,7 @@ import hashlib
 import platform
 from flask import Flask, jsonify, render_template, send_from_directory
 import psutil
+from waitress import serve
 
 
 app = Flask(__name__, static_folder=None)
@@ -61,4 +62,4 @@ def sysinfo():
     return jsonify(info)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0")
+    serve(app, listen='*:5000')
