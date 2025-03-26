@@ -1,0 +1,42 @@
+# This Kubernetes manifest exposes 3 Buoy pods using an LoadBalancer Service.
+# Deploy with `kubectl apply -f loadbalancer.yaml`.
+# Access using `http://<load-balancer-ip-addr>:8000/`
+
+# Note that kube-proxy load-balances connections, not HTTP requests. 
+# The load-balancing seen in Buoy will likely appear unevenly distributed since
+# most browsers send subsequent HTTP requests over persistent connections.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: buoy
+  name: buoy
+spec:
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 5000
+  selector:
+    app: buoy
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: buoy
+  name: buoy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: buoy
+  template:
+    metadata:
+      labels:
+        app: buoy
+    spec:
+      containers:
+      - image: bcbrookman/buoy
+        name: buoy
