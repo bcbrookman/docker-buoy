@@ -1,0 +1,60 @@
+# This Kubernetes manifest exposes 3 Buoy pods using an Ingress.
+# Deploy with `kubectl apply -f ingress.yaml`.
+# Access using `http://<ingress-ip-addr>:<ingress-http-port>/`
+#
+# Note that Ingresses use an HTTP reverse proxy to load-balance HTTP requests.
+# The load-balancing distribution seen in Buoy should be mostly even since each
+# HTTP request can be sent to a different Buoy pod.
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: buoy
+  name: buoy
+spec:
+  rules:
+    - http:
+        paths:
+          - backend:
+              service:
+                name: buoy
+                port:
+                  name: http
+            path: /
+            pathType: Prefix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: buoy
+  name: buoy
+spec:
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 5000
+  selector:
+    app: buoy
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: buoy
+  name: buoy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: buoy
+  template:
+    metadata:
+      labels:
+        app: buoy
+    spec:
+      containers:
+      - image: bcbrookman/buoy
+        name: buoy
