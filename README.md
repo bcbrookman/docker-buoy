@@ -2,6 +2,8 @@
 
 Buoy is simple containerized web app designed for testing load-balancing and demonstrating container concepts. It continuously calls an API endpoint to display basic system information without needing to refresh the page.
 
+![](examples/demo.gif)
+
 # Quickstart
 
 To download and run the latest tag from Docker Hub, simply run:
