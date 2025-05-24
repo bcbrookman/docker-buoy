@@ -1,6 +1,6 @@
 # Buoy
 
-Buoy is simple containerized web app designed for testing load-balancing and demonstrating container concepts. It continuously calls an API endpoint to display basic system information without needing to refresh the page.
+Buoy is a simple containerized web app designed for testing load-balancing and demonstrating container concepts. It continuously calls an API endpoint to display basic system information without needing to refresh the page.
 
 ![](examples/demo.gif)
 
