@@ -12,6 +12,10 @@ RUN --mount=type=bind,source=requirements/app.txt,target=/requirements.txt \
  && pip install ${PIP_OPTS} pip \
  && pip install ${PIP_OPTS} -r /requirements.txt
 
+# Setup non-root user
+RUN useradd -u 1001 -M buoy
+USER buoy:buoy
+
 # Copy project files
 COPY templates/ templates/
 COPY static/ static/
