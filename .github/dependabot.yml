@@ -1,16 +1,37 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for more information:
+# https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://containers.dev/guide/dependabot
+---
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-  - package-ecosystem: "docker"
-    directories: 
-      - "/"
-    schedule:
-      interval: "weekly"
-  - package-ecosystem: "pip"
+      interval: weekly
+    assignees:
+      - bcbrookman
+    commit-message:
+      prefix: build
+      include: scope
+  - package-ecosystem: docker
     directories:
-      - "/requirements/**"
+      - /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    assignees:
+      - bcbrookman
+    commit-message:
+      prefix: chore
+      include: scope
+  - package-ecosystem: pip
+    directories:
+      - /requirements/**
+    schedule:
+      interval: weekly
+    assignees:
+      - bcbrookman
+    commit-message:
+      prefix: chore
+      include: scope
