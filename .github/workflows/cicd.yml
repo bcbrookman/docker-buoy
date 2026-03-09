@@ -62,7 +62,7 @@ jobs:
           curl -I http://localhost:5000 2>&1 | grep "HTTP/1.1 200"          
 
       - name: Login to DockerHub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         if: github.ref_type == 'tag'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
